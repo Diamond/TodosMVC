@@ -1,31 +1,44 @@
 extends layout
 
 block content
-  script(type="text/x-handlebars", data-template-name="todos")
-    section#todoapp
-      header#header
-        h1 todos
-        input#new-todo(type="text", placeholder="What needs to be done?")
-      section#main
-        ul#todo-list
-          {{#each todo in model}}
-          li
-            input.toggle(type="checkbox")
-            label {{todo.title}}
-            button.destroy
-          {{/each}}
-      footer#footer
-        span#todo-count
-          strong 2
-          |  todos left
-        ul#filters
-          li
-            a(href="all", class="selected") All
-          li
-            a(href="active") Active
-          li
-            a(href="completed") Completed
-        button#clear-completed
-          Clear completed (1)
-    footer#info
-      p Double-click to edit a todo
+  html.
+    <script type="text/x-handlebars" data-template-name="todos">
+      <section id="todoapp">
+        <header id="header">
+          <h1>todos</h1>
+          {{input type="text" id="new-todo" placeholder="What needs tobe done?" value=newTitle action="createTodo"}}
+        </header>
+        <section id="main">
+          <ul id="todo-list">
+            {{#each todo in model itemController="todo"}}
+              <li {{bind-attr class="todo.isCompleted:completed todo.isEditing:editing"}}>
+                {{#if todo.isEditing}}
+                  <input class="edit">
+                {{else}}
+                  {{input type="checkbox" checked=todo.isCompleted class="toggle"}}
+                  <label {{action "editTodo" on="doubleClick"}}>{{todo.title}}</label>
+                  <button class="destroy">
+                {{/if}}
+              </li>
+            {{/each}}
+          </ul>
+        </section>
+        <footer id="footer">
+          <span id="todo-count">
+            <strong>{{remaining}}</strong>
+            {{inflection}} left
+          </span>
+          <ul id="filters">
+            <li><a href="all" class="selected">All</a></li>
+            <li><a href="active">Active</a></li>
+            <li><a href="completed">Completed</a></li>
+          </ul>
+          <button id="clear-completed">
+            Clear completed (1)
+          </button>
+        </footer>
+      </section>
+      <footer id="info">
+        <p>Double-click to edit a todo</p>
+      </footer>
+    </script>
